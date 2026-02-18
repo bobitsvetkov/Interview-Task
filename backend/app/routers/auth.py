@@ -1,14 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.dependencies import get_current_user
 from app.models import User
-from app.schemas import UserRegister, UserLogin, TokenResponse, RefreshRequest
+from app.schemas import UserRegister, UserLogin, MessageResponse, MeResponse
 from app.services.auth import (
     hash_password,
     verify_password,
-    create_access_token,
-    create_refresh_token,
+    set_auth_cookies,
+    clear_auth_cookies,
     decode_token,
 )
 
@@ -17,11 +18,11 @@ router = APIRouter(prefix="/api", tags=["auth"])
 
 @router.post(
     "/register",
-    response_model=TokenResponse,
+    response_model=MessageResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Register a new user",
 )
-def register(body: UserRegister, db: Session = Depends(get_db)):
+def register(body: UserRegister, response: Response, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == body.email).first():
         raise HTTPException(status.HTTP_409_CONFLICT, "Email already registered")
 
@@ -30,35 +31,35 @@ def register(body: UserRegister, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    return TokenResponse(
-        access_token=create_access_token(user.id),
-        refresh_token=create_refresh_token(user.id),
-    )
+    set_auth_cookies(response, user.id)
+    return MessageResponse(message="ok")
 
 
 @router.post(
     "/login",
-    response_model=TokenResponse,
+    response_model=MessageResponse,
     summary="Log in with email and password",
 )
-def login(body: UserLogin, db: Session = Depends(get_db)):
+def login(body: UserLogin, response: Response, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == body.email).first()
     if not user or not verify_password(body.password, user.hashed_password):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid email or password")
 
-    return TokenResponse(
-        access_token=create_access_token(user.id),
-        refresh_token=create_refresh_token(user.id),
-    )
+    set_auth_cookies(response, user.id)
+    return MessageResponse(message="ok")
 
 
 @router.post(
     "/refresh",
-    response_model=TokenResponse,
+    response_model=MessageResponse,
     summary="Refresh an expired session",
 )
-def refresh(body: RefreshRequest, db: Session = Depends(get_db)):
-    user_id = decode_token(body.refresh_token, expected_type="refresh")
+def refresh(request: Request, response: Response, db: Session = Depends(get_db)):
+    token = request.cookies.get("refresh_token")
+    if not token:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "No refresh token")
+
+    user_id = decode_token(token, expected_type="refresh")
     if user_id is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid refresh token")
 
@@ -66,7 +67,24 @@ def refresh(body: RefreshRequest, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User not found")
 
-    return TokenResponse(
-        access_token=create_access_token(user.id),
-        refresh_token=create_refresh_token(user.id),
-    )
+    set_auth_cookies(response, user.id)
+    return MessageResponse(message="ok")
+
+
+@router.post(
+    "/logout",
+    response_model=MessageResponse,
+    summary="Log out and clear cookies",
+)
+def logout(response: Response):
+    clear_auth_cookies(response)
+    return MessageResponse(message="ok")
+
+
+@router.get(
+    "/me",
+    response_model=MeResponse,
+    summary="Get current user info",
+)
+def me(user: User = Depends(get_current_user)):
+    return MeResponse(email=user.email)

@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
 import bcrypt
+from fastapi import Response
 from jose import JWTError, jwt
 
 from app.config import get_settings
@@ -39,6 +40,34 @@ def create_access_token(user_id: int) -> str:
 
 def create_refresh_token(user_id: int) -> str:
     return _create_token(user_id, "refresh", REFRESH_TOKEN_EXPIRE)
+
+
+def set_auth_cookies(response: Response, user_id: int) -> None:
+    access = create_access_token(user_id)
+    refresh = create_refresh_token(user_id)
+    response.set_cookie(
+        key="access_token",
+        value=access,
+        httponly=True,
+        samesite="lax",
+        secure=False,
+        max_age=int(ACCESS_TOKEN_EXPIRE.total_seconds()),
+        path="/api",
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh,
+        httponly=True,
+        samesite="lax",
+        secure=False,
+        max_age=int(REFRESH_TOKEN_EXPIRE.total_seconds()),
+        path="/api",
+    )
+
+
+def clear_auth_cookies(response: Response) -> None:
+    response.delete_cookie(key="access_token", path="/api")
+    response.delete_cookie(key="refresh_token", path="/api")
 
 
 def decode_token(token: str, expected_type: str) -> int | None:
