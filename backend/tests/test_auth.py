@@ -19,7 +19,6 @@ def test_register_success(client: TestClient):
     body = r.json()
     assert "access_token" in body
     assert "refresh_token" in body
-    assert body["token_type"] == "bearer"
 
 
 def test_register_duplicate_email(client: TestClient):

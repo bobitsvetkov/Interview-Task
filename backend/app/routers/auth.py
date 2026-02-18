@@ -15,7 +15,12 @@ from app.services.auth import (
 router = APIRouter(prefix="/api", tags=["auth"])
 
 
-@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register",
+    response_model=TokenResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Register a new user",
+)
 def register(body: UserRegister, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == body.email).first():
         raise HTTPException(status.HTTP_409_CONFLICT, "Email already registered")
@@ -31,7 +36,11 @@ def register(body: UserRegister, db: Session = Depends(get_db)):
     )
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post(
+    "/login",
+    response_model=TokenResponse,
+    summary="Log in with email and password",
+)
 def login(body: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == body.email).first()
     if not user or not verify_password(body.password, user.hashed_password):
@@ -43,7 +52,11 @@ def login(body: UserLogin, db: Session = Depends(get_db)):
     )
 
 
-@router.post("/refresh", response_model=TokenResponse)
+@router.post(
+    "/refresh",
+    response_model=TokenResponse,
+    summary="Refresh an expired session",
+)
 def refresh(body: RefreshRequest, db: Session = Depends(get_db)):
     user_id = decode_token(body.refresh_token, expected_type="refresh")
     if user_id is None:
