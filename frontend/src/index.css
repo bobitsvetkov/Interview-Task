@@ -1,0 +1,33 @@
+:root {
+  --background-color-page: #1a1a2e;
+  --card-background: #16213e;
+  --main-blue: #0f3460;
+  --text: #e0e0e0;
+  --secondary-text: #8892a4;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --transition-time: 0.2s;
+  --transform-size: scale(1.02);
+
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text);
+  background-color: var(--background-color-page);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+}
