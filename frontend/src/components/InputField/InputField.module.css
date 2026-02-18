@@ -1,0 +1,57 @@
+.main {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+  padding: 6px 0;
+}
+
+.title {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.input_wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input_text {
+  width: 100%;
+  border: none;
+  background-color: var(--background-color-page);
+  height: 40px;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  box-sizing: border-box;
+  padding: 10px;
+  color: var(--text);
+  outline: none;
+}
+
+.password_input {
+  padding-right: 55px;
+}
+
+.input_text:focus {
+  border: 1px solid var(--main-blue);
+}
+
+.toggle_password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--secondary-text);
+  outline: none;
+}
+
+.toggle_password:hover {
+  color: var(--main-blue);
+}
