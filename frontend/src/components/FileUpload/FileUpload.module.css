@@ -1,0 +1,42 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: var(--main-blue);
+  color: #fff;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--transition-time);
+}
+
+.label:hover {
+  opacity: 0.9;
+  transform: var(--transform-size);
+}
+
+.label_disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.label_disabled:hover {
+  transform: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.filename {
+  color: var(--secondary-text);
+  font-size: 13px;
+}
