@@ -16,9 +16,8 @@ def login(client: TestClient, email: str = "user@test.com", password: str = "sec
 def test_register_success(client: TestClient):
     r = register(client)
     assert r.status_code == status.HTTP_201_CREATED
-    body = r.json()
-    assert "access_token" in body
-    assert "refresh_token" in body
+    assert "access_token" in r.cookies
+    assert "refresh_token" in r.cookies
 
 
 def test_register_duplicate_email(client: TestClient):
@@ -39,9 +38,8 @@ def test_login_success(client: TestClient):
     register(client)
     r = login(client)
     assert r.status_code == status.HTTP_200_OK
-    body = r.json()
-    assert "access_token" in body
-    assert "refresh_token" in body
+    assert "access_token" in r.cookies
+    assert "refresh_token" in r.cookies
 
 
 def test_login_wrong_password(client: TestClient):
@@ -59,22 +57,25 @@ def test_login_nonexistent_user(client: TestClient):
 
 
 def test_refresh_success(client: TestClient):
-    tokens = register(client).json()
-    r = client.post("/api/refresh", json={"refresh_token": tokens["refresh_token"]})
+    register(client)
+    r = client.post("/api/refresh")
     assert r.status_code == status.HTTP_200_OK
-    body = r.json()
-    assert "access_token" in body
-    assert "refresh_token" in body
+    assert "access_token" in r.cookies
+    assert "refresh_token" in r.cookies
 
 
 def test_refresh_with_access_token_fails(client: TestClient):
-    tokens = register(client).json()
-    r = client.post("/api/refresh", json={"refresh_token": tokens["access_token"]})
+    register(client)
+    access = client.cookies["access_token"]
+    client.cookies.clear()
+    client.cookies.set("refresh_token", access, domain="testserver.local", path="/api")
+    r = client.post("/api/refresh")
     assert r.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_refresh_with_garbage_token_fails(client: TestClient):
-    r = client.post("/api/refresh", json={"refresh_token": "garbage"})
+    client.cookies.set("refresh_token", "garbage", domain="testserver.local", path="/api")
+    r = client.post("/api/refresh")
     assert r.status_code == status.HTTP_401_UNAUTHORIZED
 
 
@@ -82,5 +83,5 @@ def test_refresh_with_garbage_token_fails(client: TestClient):
 
 
 def test_tokens_are_different(client: TestClient):
-    tokens = register(client).json()
-    assert tokens["access_token"] != tokens["refresh_token"]
+    register(client)
+    assert client.cookies.get("access_token") != client.cookies.get("refresh_token")
