@@ -1,0 +1,53 @@
+.wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th,
+.table td {
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table th {
+  background-color: var(--main-blue);
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+}
+
+.table th:hover {
+  opacity: 0.9;
+}
+
+.table tr {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table tr:hover td {
+  background-color: var(--background-color-page);
+}
+
+.table td {
+  color: var(--text);
+}
+
+.sort_indicator {
+  margin-left: 4px;
+  font-size: 11px;
+}
+
+.empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--secondary-text);
+}
