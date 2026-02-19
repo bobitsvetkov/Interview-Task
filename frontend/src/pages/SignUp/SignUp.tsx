@@ -2,6 +2,8 @@ import { useState, useTransition } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import InputField from "../../components/InputField/InputField";
 import { register } from "../../api/auth";
+import { getErrorMessage } from "../../utils/error";
+import { validateSignUp } from "../../utils/validation";
 import styles from "./SignUp.module.css";
 
 export default function SignUp() {
@@ -22,8 +24,9 @@ export default function SignUp() {
     e.preventDefault();
     setError("");
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+    const validationError = validateSignUp(formData.email, formData.password, formData.confirmPassword);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -32,7 +35,7 @@ export default function SignUp() {
         await register(formData.email, formData.password);
         navigate("/dashboard");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong");
+        setError(getErrorMessage(err));
       }
     });
   };

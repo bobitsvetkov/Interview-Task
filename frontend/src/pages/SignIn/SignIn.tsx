@@ -2,6 +2,7 @@ import { useState, useTransition } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import InputField from "../../components/InputField/InputField";
 import { login } from "../../api/auth";
+import { getErrorMessage } from "../../utils/error";
 import styles from "./SignIn.module.css";
 
 export default function SignIn() {
@@ -23,7 +24,7 @@ export default function SignIn() {
         await login(formData.email, formData.password);
         navigate("/dashboard");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong");
+        setError(getErrorMessage(err));
       }
     });
   };
