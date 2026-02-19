@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
-from app.routers import auth
+from app.routers import auth, datasets
 
 Base.metadata.create_all(bind=engine)
 
@@ -14,9 +14,11 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
 )
 
 app.include_router(auth.router)
+app.include_router(datasets.router)
 
 
 @app.get("/health")
