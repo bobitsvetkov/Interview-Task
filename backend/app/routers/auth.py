@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -10,7 +10,6 @@ from app.services.auth import (
     verify_password,
     set_auth_cookies,
     clear_auth_cookies,
-    decode_token,
 )
 
 router = APIRouter(prefix="/api", tags=["auth"])
@@ -44,28 +43,6 @@ def login(body: UserLogin, response: Response, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == body.email).first()
     if not user or not verify_password(body.password, user.hashed_password):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid email or password")
-
-    set_auth_cookies(response, user.id)
-    return MessageResponse(message="ok")
-
-
-@router.post(
-    "/refresh",
-    response_model=MessageResponse,
-    summary="Refresh an expired session",
-)
-def refresh(request: Request, response: Response, db: Session = Depends(get_db)):
-    token = request.cookies.get("refresh_token")
-    if not token:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "No refresh token")
-
-    user_id = decode_token(token, expected_type="refresh")
-    if user_id is None:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid refresh token")
-
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User not found")
 
     set_auth_cookies(response, user.id)
     return MessageResponse(message="ok")

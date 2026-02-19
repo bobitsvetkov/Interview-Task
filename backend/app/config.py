@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: int
     JWT_SECRET: str
-    JWT_REFRESH_SECRET: str
 
     @property
     def database_url(self) -> str:

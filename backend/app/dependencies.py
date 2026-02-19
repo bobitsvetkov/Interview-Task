@@ -14,7 +14,7 @@ def get_current_user(
     if not token:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Not authenticated")
 
-    user_id = decode_token(token, expected_type="access")
+    user_id = decode_token(token)
     if user_id is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid token")
 
