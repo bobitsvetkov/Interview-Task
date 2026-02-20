@@ -48,22 +48,6 @@ export default function DatasetDetail() {
   } else if (data) {
     content = (
       <>
-        <div className={styles.header}>
-            <div>
-              <h1 className={styles.title}>{data.filename}</h1>
-              <span className={styles.subtitle}>
-                {data.row_count} records · Uploaded {new Date(data.created_at).toLocaleDateString()}
-              </span>
-            </div>
-            <button
-              className={styles.export_button}
-              onClick={handleExport}
-              disabled={exporting}
-            >
-              {exporting ? "Exporting..." : "Export CSV"}
-            </button>
-          </div>
-
           <div className={styles.stats}>
             <div className={styles.stat_card}>
               <div className={styles.stat_label}>Total Sales</div>
@@ -164,9 +148,20 @@ export default function DatasetDetail() {
 
   return (
     <div className={styles.main}>
-      <button className={styles.back_button} onClick={() => navigate("/dashboard")}>
-        ← Back to Dashboard
-      </button>
+      <div className={styles.top_bar}>
+        <button className={styles.back_button} onClick={() => navigate("/dashboard")}>
+          ← Back to Dashboard
+        </button>
+        {data && (
+          <button
+            className={styles.export_button}
+            onClick={handleExport}
+            disabled={exporting}
+          >
+            {exporting ? "Exporting..." : "Export CSV"}
+          </button>
+        )}
+      </div>
 
       {(error || exportError) && <div className={styles.error}>{error || exportError}</div>}
 

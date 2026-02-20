@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { uploadCSV, listDatasets, getDatasetStatus } from "../api/dataset";
 import { usePolling } from "./usePolling";
 import { getErrorMessage } from "../utils/error";
@@ -11,7 +11,7 @@ export function useDashboard() {
   const [uploadResult, setUploadResult] = useState<UploadStats | null>(null);
   const [isUploading, startUpload] = useTransition();
   const [error, setError] = useState("");
-  const [pollingId, setPollingId] = useState<number | null>(null);
+  const pollingIdRef = useRef<number | null>(null);
 
   const refreshDatasets = useCallback(async () => {
     const res = await listDatasets();
@@ -19,9 +19,11 @@ export function useDashboard() {
   }, []);
 
   const handlePoll = useCallback(async () => {
-    if (!pollingId) return true;
-    const status = await getDatasetStatus(pollingId);
+    const id = pollingIdRef.current;
+    if (!id) return true;
+    const status = await getDatasetStatus(id);
     if (status.status === "ready") {
+      pollingIdRef.current = null;
       setUploadResult((prev) =>
         prev ? { ...prev, status: "ready", row_count: status.row_count, rows_dropped: status.rows_dropped } : prev,
       );
@@ -29,12 +31,13 @@ export function useDashboard() {
       return true;
     }
     if (status.status === "failed") {
+      pollingIdRef.current = null;
       setError("Processing failed");
       setUploadResult(null);
       return true;
     }
     return false;
-  }, [pollingId, refreshDatasets]);
+  }, [refreshDatasets]);
 
   const { start: startPolling } = usePolling(handlePoll, POLL_INTERVAL);
 
@@ -53,7 +56,7 @@ export function useDashboard() {
         setUploadResult(stats);
         await refreshDatasets();
         if (stats.status === "processing") {
-          setPollingId(stats.dataset_id);
+          pollingIdRef.current = stats.dataset_id;
           startPolling();
         }
       } catch (err) {
