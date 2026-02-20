@@ -15,6 +15,12 @@ Full-stack application for uploading, processing, and visualizing CSV sales data
 cp .env.example .env
 ```
 
+Generate a secure JWT secret:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(64))"
+```
+
 2. Start all services:
 
 ```bash
@@ -31,7 +37,15 @@ docker compose up --build
 
 ## Testing
 
-Run both frontend and backend tests with a single command from the project root:
+Activate the backend virtual environment first, then run both frontend and backend tests:
+
+```bash
+# Linux / macOS
+source backend/venv/bin/activate
+
+# Windows
+backend\venv\Scripts\activate
+```
 
 ```bash
 npm test

@@ -2,6 +2,8 @@
   "name": "interview-task",
   "private": true,
   "scripts": {
-    "test": "cd frontend && npm test && cd ../backend && .\\venv\\Scripts\\python -m pytest tests/ -v"
+    "test:frontend": "cd frontend && npm test",
+    "test:backend": "cd backend && python -m pytest tests/ -v",
+    "test": "npm run test:frontend && npm run test:backend"
   }
 }
