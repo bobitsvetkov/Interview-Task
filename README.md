@@ -4,16 +4,43 @@ Full-stack application for uploading, processing, and visualizing CSV sales data
 
 ## Prerequisites
 
-- **Python 3.12+** — for the backend virtual environment and running tests
-- **Node.js 22+** — for the frontend and running tests
-- **Docker & Docker Compose** — runs the database, backend, and frontend
-- **Sample CSV** — use the included `sales_data_sample.csv` or any CSV with matching columns (ORDERNUMBER, SALES, ORDERDATE, STATUS, PRODUCTLINE, CUSTOMERNAME, COUNTRY, DEALSIZE, etc.)
+- **Docker Desktop** — runs the database, backend, and frontend containers
+- **Python 3.12+** and **Node.js 22+** — needed for running test command
+- **Sample CSV File** — use the included `sales_data_sample.csv` file located at the project root. You can upload it via the upload button once you are authenticated and get redirected to the dashboard page.
 
 ## Setup
 
-1. Create and activate a virtual environment, then install backend dependencies:
+1. Copy the example environment file and generate a JWT secret:
 
 ```bash
+cp .env.example .env
+python -c "import secrets; print(secrets.token_urlsafe(64))"
+```
+
+Paste the generated value into `.env` as `JWT_SECRET`.
+
+2. Start all services:
+
+```bash
+docker compose up --build
+```
+
+3. Access the app:
+
+| Service  | URL                                    |
+|----------|----------------------------------------|
+| Frontend | http://localhost:3000                   |
+| Backend  | http://localhost:8000                   |
+| API Docs | http://localhost:8000/docs (Swagger UI) |
+
+## Testing
+
+Tests require Python, Node.js, and Docker to be running (for the PostgreSQL database).
+
+1. Install dependencies:
+
+```bash
+# Backend
 cd backend
 python -m venv venv
 
@@ -25,49 +52,21 @@ venv\Scripts\activate
 
 pip install -r requirements.txt
 cd ..
+
+# Frontend
+cd frontend
+npm install
+cd ..
 ```
 
-2. Copy the example environment file and generate a JWT secret:
-
-```bash
-cp .env.example .env
-python -c "import secrets; print(secrets.token_urlsafe(64))"
-```
-
-Paste the generated value into `.env` as `JWT_SECRET`.
-
-3. Start all services:
-
-```bash
-docker compose up --build
-```
-
-4. Access the app:
-
-| Service  | URL                                    |
-|----------|----------------------------------------|
-| Frontend | http://localhost:3000                   |
-| Backend  | http://localhost:8000                   |
-| API Docs | http://localhost:8000/docs (Swagger UI) |
-
-## Testing
-
-Activate the backend virtual environment first, then run both frontend and backend tests:
-
-```bash
-# Linux / macOS
-source backend/venv/bin/activate
-
-# Windows
-backend\venv\Scripts\activate
-```
+2. Run all tests:
 
 ```bash
 npm test
 ```
 
-- **Frontend** — Vitest (component unit tests + API call mock)
-- **Backend** — pytest (ETL unit tests + API integration tests, requires Docker to be running)
+- **Frontend** — Vitest (component unit tests + API call mocks)
+- **Backend** — pytest (ETL unit tests + API integration tests)
 
 ## API Endpoints
 
