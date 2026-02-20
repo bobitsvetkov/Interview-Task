@@ -48,8 +48,6 @@ def _csv(rows: list[dict]) -> str:
     return pd.DataFrame(rows).to_csv(index=False)
 
 
-# ── parse_csv ──────────────────────────────────────────────────
-
 
 def test_parse_csv_valid():
     file = _make_upload(_csv([_base_row(), _base_row(ORDERNUMBER=1002)]))
@@ -77,8 +75,6 @@ def test_parse_csv_invalid_content():
     except HTTPException as e:
         assert e.status_code == 400
 
-
-# ── transform ──────────────────────────────────────────────────
 
 
 def test_transform_deduplication():

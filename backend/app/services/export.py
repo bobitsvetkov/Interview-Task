@@ -9,7 +9,6 @@ INTERNAL_COLUMNS = {"id", "dataset_id", "dataset"}
 
 
 def export_csv(db: Session, dataset_id: int) -> io.BytesIO:
-    """Build a CSV buffer of all records in a dataset."""
     records = (
         db.query(SalesRecord)
         .filter(SalesRecord.dataset_id == dataset_id)

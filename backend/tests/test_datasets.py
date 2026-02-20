@@ -10,8 +10,6 @@ from app.models import Dataset, SalesRecord, User
 from app.services.auth import hash_password
 
 
-# ── Helpers ──────────────────────────────────────────────────────
-
 
 def _base_row(**overrides) -> dict:
     row = {
@@ -139,8 +137,6 @@ def _seed_dataset(db: Session) -> tuple[User, Dataset]:
     return user, dataset
 
 
-# ── Upload Endpoint ──────────────────────────────────────────────
-
 
 def test_upload_csv(client: TestClient):
     _register(client)
@@ -166,8 +162,6 @@ def test_upload_requires_auth(client: TestClient):
     r = client.post("/api/upload", files={"file": ("data.csv", io.BytesIO(csv), "text/csv")})
     assert r.status_code == status.HTTP_401_UNAUTHORIZED
 
-
-# ── List Datasets ────────────────────────────────────────────────
 
 
 def test_list_datasets_empty(client: TestClient):
@@ -197,8 +191,6 @@ def test_list_datasets_user_isolation(client: TestClient, db: Session):
     assert r.status_code == 200
     assert r.json()["datasets"] == []
 
-
-# ── Dataset Detail ───────────────────────────────────────────────
 
 
 def test_get_dataset_detail(client: TestClient, db: Session):
@@ -270,8 +262,6 @@ def test_get_dataset_not_found(client: TestClient):
     assert r.status_code == status.HTTP_404_NOT_FOUND
 
 
-# ── Dataset Status ───────────────────────────────────────────────
-
 
 def test_get_dataset_status(client: TestClient, db: Session):
     _, dataset = _seed_dataset(db)
@@ -288,8 +278,6 @@ def test_get_dataset_status_not_found(client: TestClient):
     r = client.get("/api/datasets/9999/status")
     assert r.status_code == status.HTTP_404_NOT_FOUND
 
-
-# ── Export ────────────────────────────────────────────────────────
 
 
 def test_export_csv(client: TestClient, db: Session):

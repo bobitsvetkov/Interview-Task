@@ -8,6 +8,7 @@ from app.config import get_settings
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE = timedelta(hours=1)
+# TODO: add refresh token
 
 
 def hash_password(password: str) -> str:
@@ -45,7 +46,6 @@ def clear_auth_cookies(response: Response) -> None:
 
 
 def decode_token(token: str) -> int | None:
-    """Returns user_id or None if token is invalid."""
     try:
         payload = jwt.decode(
             token, get_settings().JWT_SECRET, algorithms=[ALGORITHM]

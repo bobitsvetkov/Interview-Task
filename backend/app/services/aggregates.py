@@ -11,7 +11,6 @@ from app.schemas import (
 
 
 def build_aggregates(db: Session, dataset_id: int) -> DatasetAggregates:
-    """Compute summary aggregates for a dataset."""
     total_sales = db.query(func.sum(SalesRecord.total_sales)).filter(
         SalesRecord.dataset_id == dataset_id
     ).scalar() or 0.0

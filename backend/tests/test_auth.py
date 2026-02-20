@@ -10,9 +10,6 @@ def login(client: TestClient, email: str = "user@test.com", password: str = "sec
     return client.post("/api/login", json={"email": email, "password": password})
 
 
-# ── Test User Signup ──────────────────────────────────────────────
-
-
 def test_register_success(client: TestClient):
     r = register(client)
     assert r.status_code == status.HTTP_201_CREATED
@@ -29,8 +26,6 @@ def test_register_invalid_email(client: TestClient):
     r = register(client, email="not-an-email")
     assert r.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
-
-# ── Test Login ─────────────────────────────────────────────────
 
 
 def test_login_success(client: TestClient):

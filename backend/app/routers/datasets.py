@@ -18,6 +18,9 @@ from app.services.etl import parse_csv, process_dataset
 
 router = APIRouter(prefix="/api", tags=["datasets"])
 
+# TODO: add DELETE
+# TODO: add size/rate limiting
+
 
 @router.post(
     "/upload",

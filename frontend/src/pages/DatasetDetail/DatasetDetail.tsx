@@ -2,10 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useDatasetDetail } from "../../hooks/useDatasetDetail";
 import { useExport } from "../../hooks/useExport";
 import { formatCurrency } from "../../utils/format";
-import CountryChart from "../../components/CountryChart/CountryChart";
-import CustomerChart from "../../components/CustomerChart/CustomerChart";
+import BarChartCard from "../../components/BarChartCard/BarChartCard";
 import DataTable from "../../components/DataTable/DataTable";
-import QuarterChart from "../../components/QuarterChart/QuarterChart";
 import Pagination from "../../components/Pagination/Pagination";
 import Spinner from "../../components/Spinner/Spinner";
 import styles from "./DatasetDetail.module.css";
@@ -72,12 +70,36 @@ export default function DatasetDetail() {
           </div>
 
           <div className={styles.chart_section}>
-            <QuarterChart data={data.aggregates.sales_by_quarter} />
+            <BarChartCard
+              title="Sales by Quarter"
+              data={data.aggregates.sales_by_quarter.map((d) => ({
+                name: `${d.year} ${d.quarter}`,
+                sales: Math.round(d.total_sales),
+              }))}
+            />
           </div>
 
           <div className={styles.charts_grid}>
-            <CountryChart data={data.aggregates.sales_by_country} />
-            <CustomerChart data={data.aggregates.sales_by_customer} />
+            <BarChartCard
+              title="Top Countries by Sales"
+              horizontal
+              labelWidth={75}
+              margin={{ top: 5, right: 20, bottom: 5, left: 80 }}
+              data={data.aggregates.sales_by_country.map((d) => ({
+                name: d.country,
+                sales: Math.round(d.total_sales),
+              }))}
+            />
+            <BarChartCard
+              title="Top Customers by Sales"
+              horizontal
+              labelWidth={115}
+              margin={{ top: 5, right: 20, bottom: 5, left: 120 }}
+              data={data.aggregates.sales_by_customer.map((d) => ({
+                name: d.customer_name,
+                sales: Math.round(d.total_sales),
+              }))}
+            />
           </div>
 
           <div className={styles.filters}>

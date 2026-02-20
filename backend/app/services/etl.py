@@ -24,9 +24,9 @@ NUMERIC_COLUMNS = [
 
 
 def parse_csv(file: UploadFile) -> pd.DataFrame:
-    """Read uploaded CSV into a DataFrame and validate required columns."""
     content = file.file.read()
     try:
+        # latin-1 handles special characters in customer/city names from the Kaggle dataset
         df = pd.read_csv(io.BytesIO(content), encoding="latin-1")
     except Exception:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Could not parse CSV file")
@@ -42,19 +42,22 @@ def parse_csv(file: UploadFile) -> pd.DataFrame:
 
 
 def transform(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
-    """Apply ETL transforms. Returns (cleaned_df, rows_dropped)."""
     original_count = len(df)
 
+    # same order+product = same line item, keep first
     df = df.drop_duplicates(subset=["ORDERNUMBER", "PRODUCTCODE"], keep="first")
     rows_dropped = original_count - len(df)
 
+    # median over mean because SALES has big outliers that skew the average
     for col in NUMERIC_COLUMNS:
         if col in df.columns:
             median_val = df[col].median()
             df[col] = df[col].fillna(median_val)
 
+    # format="mixed" because the Kaggle CSV has inconsistent date formats
     df["ORDERDATE"] = pd.to_datetime(df["ORDERDATE"], format="mixed", dayfirst=False)
 
+    # TOTAL_SALES gives the actual revenue per line (SALES in the CSV is sometimes rounded)
     df["TOTAL_SALES"] = df["QUANTITYORDERED"] * df["PRICEEACH"]
 
     df["ORDER_QUARTER"] = df["ORDERDATE"].dt.quarter.map(
@@ -65,7 +68,6 @@ def transform(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
 
 
 def process_dataset(dataset_id: int, df: pd.DataFrame) -> None:
-    """Background task: transform data and insert records."""
     db = SessionLocal()
     try:
         dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
