@@ -1,0 +1,159 @@
+.main {
+  min-height: 100vh;
+  background-color: var(--background-color-page);
+  padding: 32px 40px;
+}
+
+.back_button {
+  background: none;
+  border: none;
+  color: var(--secondary-text);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: 20px;
+  transition: var(--transition-time);
+}
+
+.back_button:hover {
+  color: var(--text);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.subtitle {
+  color: var(--secondary-text);
+  font-size: 13px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat_card {
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--box-shadow);
+}
+
+.stat_label {
+  color: var(--secondary-text);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.stat_value {
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.chart_section {
+  margin-bottom: 24px;
+}
+
+.charts_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .charts_grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  align-items: flex-end;
+}
+
+.filter_group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter_label {
+  color: var(--secondary-text);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter_select,
+.filter_input {
+  padding: 8px 12px;
+  background-color: var(--card-background);
+  color: var(--text);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 13px;
+  outline: none;
+}
+
+.filter_select:focus,
+.filter_input:focus {
+  border-color: var(--main-blue);
+}
+
+.table_section {
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: var(--secondary-text);
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.export_button {
+  padding: 8px 16px;
+  background-color: var(--main-blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition-time);
+}
+
+.export_button:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.export_button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
