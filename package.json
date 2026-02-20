@@ -1,0 +1,7 @@
+{
+  "name": "interview-task",
+  "private": true,
+  "scripts": {
+    "test": "cd frontend && npm test && cd ../backend && .\\venv\\Scripts\\python -m pytest tests/ -v"
+  }
+}
