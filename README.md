@@ -91,6 +91,18 @@ Authentication is cookie-based. All `/api` endpoints except register and login r
 | GET    | `/api/datasets/:id/status`      | Poll processing status                           |
 | GET    | `/api/datasets/:id/export`      | Download dataset as CSV                          |
 
+## ETL Pipeline
+
+The `POST /api/upload` endpoint runs the following transforms:
+
+1. **Deduplication** — drops duplicate rows by ORDERNUMBER + PRODUCTCODE, keeping the first occurrence
+2. **Null handling** — fills missing values in numeric columns (QUANTITYORDERED, PRICEEACH, SALES, MONTH_ID, YEAR_ID) with the column median, chosen over mean to reduce sensitivity to outliers
+3. **Date parsing** — converts ORDERDATE to datetime using mixed format detection
+4. **Derived columns** — adds TOTAL_SALES (QUANTITYORDERED × PRICEEACH) and ORDER_QUARTER (Q1–Q4 from ORDERDATE)
+5. **Validation** — rejects uploads missing any of the 13 required columns
+
+Processing runs asynchronously in a background task. Poll `GET /api/datasets/{id}/status` until the status changes from `processing` to `ready`. Polls every 500ms.
+
 ## Assumptions
 
 - **No refresh token** — The brief mentioned JWT auth for `/api/register` and `/api/login` so users only see their own data. Since session refresh tokens were not specified, I used HTTP-only cookie-based sessions which provide the same user isolation with simpler client-side logic.
