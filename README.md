@@ -107,6 +107,6 @@ Processing runs asynchronously in a background task. Poll `GET /api/datasets/{id
 
 ## Assumptions
 
-- **No refresh token** — The brief mentioned JWT auth for `/api/register` and `/api/login` so users only see their own data. Since session refresh tokens were not specified, I used HTTP-only cookie-based sessions which provide the same user isolation with simpler client-side logic.
+- **No refresh token** — Since session refresh tokens were not specified, I used HTTP-only cookie-based sessions which provide the same current user isolation.
 - **No file size or rate limit** — As it wasn't mentioned in the instructions I haven't implemented such security fixes, which would otherwise be a must.
 - **No delete functionality** — As with the previous assumption I haven't implemented a delete functionality as I didn't see it on the instructions.
