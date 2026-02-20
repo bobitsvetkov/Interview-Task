@@ -38,6 +38,7 @@ class DatasetSummary(BaseModel):
     id: int
     filename: str
     row_count: int
+    rows_dropped: int
     total_sales: float
     date_min: datetime | None
     date_max: datetime | None
