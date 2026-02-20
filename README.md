@@ -35,7 +35,9 @@ docker compose up --build
 
 ## Testing
 
-Tests require Python, Node.js, and Docker to be running (for the PostgreSQL database).
+Tests require Python, Node.js, and Docker to be running.
+
+Frontend Tests were done via vitest, while backend tests were done with pytest
 
 1. Install dependencies:
 
